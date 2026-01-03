@@ -12,18 +12,25 @@ class JobData(BaseModel):
     education: Optional[str] = Field(description="Minimum education")
     skills: Optional[List[str]] = Field(description="Individual Programming languages, frameworks and libraries", default_factory=list)
 
+class Candidate(BaseModel):
+    '''Candidate personal details'''
+    myid: Optional[str]
+    full_name: Optional[str]
+    email: Optional[str]
+    phone: Optional[str]
 
-class ResumeData(BaseModel):
+class ResumeData(Candidate):
     '''Parsed Resume Data'''
     skills: Optional[List[str]] = Field(description="Individual Programming languages, frameworks and libraries", default_factory=list)
     soft_skills: Optional[List[str]]
-    years_of_experience: Optional[str]
+    years_of_experience: Optional[str] = Field(description="Total experience of candidate in years or months")
     education_details: Optional[str]
     key_achievements: Optional[List[str]]
     core_competencies: Optional[str]  
     industry_experience: Optional[str]
     leadership_experience: Optional[str]
     projects_completed: Optional[List[str]]
+    
 
 class Recommendation(BaseModel):
     section: str
@@ -36,8 +43,8 @@ class SkillsGapAnalysis(BaseModel):
     soft_skills: str
 
 
-class ResumeMatchAnalysis(BaseModel):
-    overall_match_percentage: Optional[str] = Field(
+class ResumeMatchAnalysis(Candidate):
+    overall_match_percentage: Optional[int] = Field(
         description="Overall match percentage between resume and job"
     )
     matching_skills: List[str] = Field(
@@ -49,6 +56,9 @@ class ResumeMatchAnalysis(BaseModel):
         description="Skills required by job but missing in resume"
     )
     experience_match_analysis: Optional[str]
+    experience_match_percentage: Optional[int]
     education_match_analysis: Optional[str]
+    education_match_percentage: Optional[int]
+    project_relevance_percentage: Optional[int] = Field(description="based on keywords in job and resume")
     recommendations_for_improvement: List[Recommendation] 
     skills_gap_analysis: List[SkillsGapAnalysis]

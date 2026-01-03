@@ -2,6 +2,7 @@ from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chat_models import init_chat_model
 from models.model import ResumeMatchAnalysis
+import uuid
 
 
 def match_analyzer(job, resume):
@@ -17,15 +18,20 @@ def match_analyzer(job, resume):
                 3. Extract all skills from resume and return relevant missing skills compared to job description.
                 4. Extract overall experience from resume and return detailed analysis compared to job description.
                 5. Extract overall education from resume and return detailed analysis compared to job description.
-                6. Provide a detailed analysis recommending improvements and providing skill gaps
+                6. Provide a detailed analysis recommending improvements and providing skill gaps.
+                7. Provide relevant percentage for experience match, education match and project match.
 
                 Use the following format and replace the examples:
                 {{
-                    "overall_match_percentage": "string",
+                    "full_name": "string"
+                    "overall_match_percentage": "int",
                     "matching_skills":["string"],
                     "missing_skills": ["string"],
                     "experience_match_analysis": "string",
+                    "experience_match_percentage": "int",
                     "education_match_analysis": "string",
+                    "education_match_percentage":"int",
+                    "project_relevance_percentage": "int",
                     "recommendations_for_improvement": [
                         {{
                             "section": "string",
@@ -45,7 +51,10 @@ def match_analyzer(job, resume):
                '''Job requirements: 
                 {job}
                 Resume details:
-                {resume}'''
+                {resume}
+                myid: {myid}
+                '''
+
             )
         ]
     ) 
@@ -57,7 +66,7 @@ def match_analyzer(job, resume):
             method="json_schema",
             include_raw=False
         )
-    prompt = prompt_template.invoke({"job": job, "resume": resume})
+    prompt = prompt_template.invoke({"job": job, "resume": resume, "myid": uuid.uuid4()})
     result = structure_model.invoke(prompt)
     return result
 
